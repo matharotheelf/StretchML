@@ -84,6 +84,7 @@ function gotPoses(results) {
 function extractStretchData(currentPose) {
   let stretchPoseData = new StretchPoseData(currentPose);
   stretchPoseData.draw();
+  stretchPoseData.featuresArray();
 
   return stretchPoseData
 }

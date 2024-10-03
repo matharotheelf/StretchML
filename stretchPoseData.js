@@ -24,7 +24,6 @@ class StretchPoseData {
     this.#midShoulderPosition = this.calculateMidShoulderPosition()
 
     // calculate all the displacement vectors which are used in the stretch classification process 
-
     this.headDisplacement = this.calculateHeadDisplacement(keypoints);
 
     this.leftUpperArmDisplacement = this.calculateLeftUpperArmDisplacement(keypoints);
@@ -74,5 +73,18 @@ class StretchPoseData {
     line(this.#leftElbowPosition.x, this.#leftElbowPosition.y, this.#leftHandPosition.x, this.#leftHandPosition.y);
     line(this.#rightShoulderPosition.x, this.#rightShoulderPosition.y, this.#rightElbowPosition.x, this.#rightElbowPosition.y);
     line(this.#rightElbowPosition.x, this.#rightElbowPosition.y, this.#rightHandPosition.x, this.#rightHandPosition.y);
+  }
+
+  // transform all the extracted data into a single array for classification
+  featuresArray() {
+    var featuresData = Array();
+
+    featuresData.push(this.headDisplacement.x, this.headDisplacement.y);
+    featuresData.push(this.leftUpperArmDisplacement.x, this.leftUpperArmDisplacement.y);
+    featuresData.push(this.leftLowerArmDisplacement.x, this.leftLowerArmDisplacement.y);
+    featuresData.push(this.rightUpperArmDisplacement.x, this.rightUpperArmDisplacement.y);
+    featuresData.push(this.rightLowerArmDisplacement.x, this.rightLowerArmDisplacement.y);
+
+    return featuresData;
   }
 }
