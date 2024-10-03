@@ -40,7 +40,6 @@ function draw() {
 
   if(timeAccumalator >= poseSampleInterval && poses.length == 1) {
     extractStretchData(poses[0].keypoints)
-    console.log(timeAccumalator);
     timeAccumalator = 0;
   }
 
@@ -86,6 +85,5 @@ function extractStretchData(currentPose) {
   let stretchPoseData = new StretchPoseData(currentPose);
   stretchPoseData.draw();
 
-  console.log(stretchPoseData)
   return stretchPoseData
 }
