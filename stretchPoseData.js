@@ -36,7 +36,7 @@ class StretchPoseData {
   
   calculateMidShoulderPosition() {
     // average position of the two shoulder keypoints
-    return p5.Vector.add(p5.Vector.sub(this.#rightShoulderPosition, this.#leftShoulderPosition).div(2), this.#leftShoulderPosition)
+    return p5.Vector.add(this.#rightShoulderPosition, this.#leftShoulderPosition).div(2)
   }
 
   calculateHeadDisplacement() {
@@ -66,18 +66,13 @@ class StretchPoseData {
 
   // visualise all of the extracted displacement vectors
   draw() {
-    push();
-    translate(width / 2, height / 2);
-
     stroke(255, 165, 0);
     strokeWeight(10);
 
-    line(0, 0, this.headDisplacement.x, this.headDisplacement.y);
-    line(0, 0, this.leftUpperArmDisplacement.x, this.leftUpperArmDisplacement.y);
-    line(0, 0, this.leftLowerArmDisplacement.x, this.leftLowerArmDisplacement.y);
-    line(0, 0, this.rightUpperArmDisplacement.x, this.rightUpperArmDisplacement.y);
-    line(0, 0, this.rightLowerArmDisplacement.x, this.rightLowerArmDisplacement.y);
-    
-    pop();
+    line(this.#midShoulderPosition.x, this.#midShoulderPosition.y, this.#nosePosition.x, this.#nosePosition.y);
+    line(this.#leftShoulderPosition.x, this.#leftShoulderPosition.y, this.#leftElbowPosition.x, this.#leftElbowPosition.y);
+    line(this.#leftElbowPosition.x, this.#leftElbowPosition.y, this.#leftHandPosition.x, this.#leftHandPosition.y);
+    line(this.#rightShoulderPosition.x, this.#rightShoulderPosition.y, this.#rightElbowPosition.x, this.#rightElbowPosition.y);
+    line(this.#rightElbowPosition.x, this.#rightElbowPosition.y, this.#rightHandPosition.x, this.#rightHandPosition.y);
   }
 }
