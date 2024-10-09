@@ -1,12 +1,12 @@
 class StretchPoseData {
-  #nosePosition
-  #leftShoulderPosition
-  #rightShoulderPosition
-  #midShoulderPosition
-  #leftElbowPosition
-  #rightElbowPosition
-  #leftHandPosition
-  #rightHandPosition
+  #nosePosition;
+  #leftShoulderPosition;
+  #rightShoulderPosition;
+  #midShoulderPosition;
+  #leftElbowPosition;
+  #rightElbowPosition;
+  #leftHandPosition;
+  #rightHandPosition;
 
   constructor(keypoints) {
     // extract the keypoint data needed for classifying the upper body stretches
