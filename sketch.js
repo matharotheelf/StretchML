@@ -10,6 +10,8 @@ let video;
 let bodyPose;
 let poses = [];
 let connections;
+let timeAccumalator = 0;
+const poseSampleInterval = 500;
 
 function preload() {
   // Load the bodyPose model
@@ -28,11 +30,21 @@ function setup() {
   bodyPose.detectStart(video, gotPoses);
   // Get the skeleton connection information
   connections = bodyPose.getSkeleton();
+
+  //every seconds tick the timer
+  setInterval(tickTimer, 1000)
 }
 
 function draw() {
   // Draw the webcam video
   image(video, 0, 0, width, height);
+
+  timeAccumalator += deltaTime;
+
+  if(timeAccumalator >= poseSampleInterval && poses.length == 1) {
+    extractStretchData(poses[0].keypoints);
+    timeAccumalator = 0;
+  }
 
   // Draw the skeleton connections
   for (let i = 0; i < poses.length; i++) {
@@ -70,4 +82,12 @@ function draw() {
 function gotPoses(results) {
   // Save the output to the poses variable
   poses = results;
+}
+
+function extractStretchData(currentPose) {
+  let stretchPoseData = new StretchPoseData(currentPose);
+  stretchPoseData.draw();
+  stretchPoseData.featuresArray();
+
+  return stretchPoseData
 }
