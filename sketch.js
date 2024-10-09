@@ -30,6 +30,9 @@ function setup() {
   bodyPose.detectStart(video, gotPoses);
   // Get the skeleton connection information
   connections = bodyPose.getSkeleton();
+
+  //every seconds tick the timer
+  setInterval(tickTimer, 1000)
 }
 
 function draw() {
