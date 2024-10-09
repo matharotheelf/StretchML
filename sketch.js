@@ -13,6 +13,25 @@ let connections;
 let timeAccumalator = 0;
 const poseSampleInterval = 500;
 
+let stretchDetectionStates = {
+  startCountdown: "startCountdown",
+  stretchNow: "stretchNow",
+}
+
+let stretchStateTransitions = {
+  startCountdown: stretchDetectionStates.stretchNow,
+  stretchNow: stretchDetectionStates.startCountdown,
+}
+
+let stretchStateDurations = {
+  startCountdown: 45,
+  stretchNow: 30,
+}
+
+let currentStretchState = stretchDetectionStates.startCountdown;
+let currentStateTime = stretchStateDurations[currentStretchState];
+
+
 function preload() {
   // Load the bodyPose model
   bodyPose = ml5.bodyPose();
@@ -32,17 +51,21 @@ function setup() {
   connections = bodyPose.getSkeleton();
 
   //every seconds tick the timer
-  setInterval(tickTimer, 1000)
+  setInterval(tickStateTimer, 1000)
 }
 
 function draw() {
   // Draw the webcam video
   image(video, 0, 0, width, height);
 
+  // increment time every frame
   timeAccumalator += deltaTime;
 
+  // if the sample time has been reached extract the stretch data for processing
   if(timeAccumalator >= poseSampleInterval && poses.length == 1) {
     extractStretchData(poses[0].keypoints);
+
+    // set time accumalator back to zero for next frame
     timeAccumalator = 0;
   }
 
@@ -84,10 +107,27 @@ function gotPoses(results) {
   poses = results;
 }
 
+// Callback function for when bodyPose outputs data
+function tickStateTimer() {
+  currentStateTime--;
+
+  console.log(currentStateTime);
+
+  if(currentStateTime === 0) {
+    transitionStretchState();
+  }
+}
+
+function transitionStretchState() {
+  currentStretchState = stretchStateTransitions[currentStretchState];
+  currentStateTime = stretchStateDurations[currentStretchState];
+}
+
+// function to extract stretch data from the current pose
 function extractStretchData(currentPose) {
   let stretchPoseData = new StretchPoseData(currentPose);
   stretchPoseData.draw();
   stretchPoseData.featuresArray();
 
-  return stretchPoseData
+  return stretchPoseData;
 }
