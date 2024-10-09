@@ -39,7 +39,7 @@ function draw() {
   timeAccumalator += deltaTime;
 
   if(timeAccumalator >= poseSampleInterval && poses.length == 1) {
-    extractStretchData(poses[0].keypoints)
+    extractStretchData(poses[0].keypoints);
     timeAccumalator = 0;
   }
 
