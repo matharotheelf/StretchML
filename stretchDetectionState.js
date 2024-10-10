@@ -1,12 +1,14 @@
 class StretchDetectionState {
+  // define all the allowed stretch detection states
   #stretchDetectionStates = {
     startCountdown: "startCountdown",
     stretchNow: "stretchNow",
   };
 
+  // define the configuration for the behavior of each state
   #stretchStatesConfig = {
     startCountdown: {
-      duration: 40,
+      duration: 30,
       transition: this.#stretchDetectionStates.stretchNow,
       type: "countdown",
     },
@@ -18,22 +20,27 @@ class StretchDetectionState {
   };
 
   constructor() {
+    // set the inital stretch state 
     this.currentStretchState = this.#stretchDetectionStates.startCountdown;
   }
 
+  // when transition is called move to the configured next state
   transition() {
-    this.currentStretchState = this.#currentConfig().transition;
+    this.currentStretchState = this.#currentStateConfig().transition;
   }
 
+  // defines whether the current state detects the users stretch
   isDetectionActive() {
-    return this.#currentConfig().type === "stretch";
+    return this.#currentStateConfig().type === "stretch";
   }
 
+  // returns the duration in time of the current state
   currentDuration() {
-    return this.#currentConfig().duration;
+    return this.#currentStateConfig().duration;
   }
 
-  #currentConfig() {
+  // gets the configuration object for the current state
+  #currentStateConfig() {
     return this.#stretchStatesConfig[this.currentStretchState];
   }
 }
