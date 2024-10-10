@@ -12,9 +12,11 @@ let poses = [];
 let connections;
 let timeAccumalator = 0;
 
-const poseSampleInterval = 500;
+const poseSampleInterval = 200;
 const stretchDetectionState = new StretchDetectionState();
 let currentStateTime = stretchDetectionState.currentDuration();
+
+let stretchDataTimeSeries = Array();
 
 function preload() {
   // Load the bodyPose model
@@ -42,6 +44,7 @@ function draw() {
   // Draw the webcam video
   image(video, 0, 0, width, height);
 
+  // if the current state is active stetch detection process the stretch data
   if(stretchDetectionState.isDetectionActive()) {
     processStretch();
   }
@@ -54,23 +57,21 @@ function gotPoses(results) {
 }
 
 function tickStateTimer() {
+  // decrement the time left for the state
   currentStateTime--;
 
-  console.log(currentStateTime);
-
   if(currentStateTime === 0) {
+    // if a detection state save the stretch data and clear
+    if(stretchDetectionState.isDetectionActive()) {
+      saveAndClearStretchData();
+    }
+
+    // transition to the next state
     stretchDetectionState.transition();
+
+    // set the timer to the duration of the new state
     currentStateTime = stretchDetectionState.currentDuration(); 
   }
-}
-
-// function to extract stretch data from the current pose
-function extractStretchData(currentPose) {
-  let stretchPoseData = new StretchPoseData(currentPose);
-  stretchPoseData.draw();
-  stretchPoseData.featuresArray();
-
-  return stretchPoseData;
 }
       
 function drawBodyPoints() {
@@ -104,6 +105,32 @@ function drawBodyPoints() {
       }
     }
   }
+}
+
+// function to extract stretch data from the current pose
+function extractStretchData(currentPose) {
+  // extract stretch data from pose
+  let stretchPoseData = new StretchPoseData(currentPose);
+
+  // draw stretch data to canvas
+  stretchPoseData.draw();
+
+  // add the stretch data to the time series for the whole stretch
+  stretchDataTimeSeries.push(stretchPoseData.featuresArray());
+}
+
+function saveAndClearStretchData() {
+  // output stretch data for debugging
+  console.log("Data");
+  console.log(stretchDataTimeSeries);
+  console.log("DataLength");
+  console.log(stretchDataTimeSeries.length);
+
+  // save the stretch data to a file
+  saveJSON(stretchDataTimeSeries, `stretchData_${new Date().toISOString()}.json`);
+
+  // clear the stretch data time series to restart for the next stretch
+  stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
 }
 
 function processStretch() {
