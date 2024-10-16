@@ -14,14 +14,14 @@ class StretchPoseData {
     this.#nosePosition = createVector(keypoints[0].x, keypoints[0].y);
     this.#leftShoulderPosition = createVector(keypoints[5].x, keypoints[5].y);
     this.#rightShoulderPosition = createVector(keypoints[6].x, keypoints[6].y);
-    this.#leftElbowPosition = createVector(keypoints[7].x, keypoints[7].y)
-    this.#rightElbowPosition = createVector(keypoints[8].x, keypoints[8].y)
-    this.#leftHandPosition = createVector(keypoints[9].x, keypoints[9].y)
-    this.#rightHandPosition = createVector(keypoints[10].x, keypoints[10].y)
+    this.#leftElbowPosition = createVector(keypoints[7].x, keypoints[7].y);
+    this.#rightElbowPosition = createVector(keypoints[8].x, keypoints[8].y);
+    this.#leftHandPosition = createVector(keypoints[9].x, keypoints[9].y);
+    this.#rightHandPosition = createVector(keypoints[10].x, keypoints[10].y);
 
     // calculate the midpoint between the shoulders
     // this is used to calculate the head displacement from the shoulders
-    this.#midShoulderPosition = this.calculateMidShoulderPosition()
+    this.#midShoulderPosition = this.calculateMidShoulderPosition();
 
     // calculate all the displacement vectors which are used in the stretch classification process 
     this.headDisplacement = this.calculateHeadDisplacement(keypoints);
@@ -35,7 +35,7 @@ class StretchPoseData {
   
   calculateMidShoulderPosition() {
     // average position of the two shoulder keypoints
-    return p5.Vector.add(this.#rightShoulderPosition, this.#leftShoulderPosition).div(2)
+    return p5.Vector.add(this.#rightShoulderPosition, this.#leftShoulderPosition).div(2);
   }
 
   calculateHeadDisplacement() {
