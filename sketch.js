@@ -46,7 +46,7 @@ function draw() {
 
   // if the current state is active stetch detection process the stretch data
   if(stretchDetectionState.isDetectionActive()) {
-    processStretch();
+    processStretchFrame();
   }
 
   drawInfoText();
@@ -68,8 +68,8 @@ function tickStateTimer() {
       saveAndClearStretchData();
     }
 
-    // transition to the next state
-    stretchDetectionState.transition();
+    // transition to the next step
+    stretchDetectionState.nextStep();
 
     // set the timer to the duration of the new state
     currentStateTime = stretchDetectionState.currentDuration(); 
@@ -156,7 +156,7 @@ function saveAndClearStretchData() {
   stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
 }
 
-function processStretch() {
+function processStretchFrame() {
   // increment time every frame
   timeAccumalator += deltaTime;
 
