@@ -9,12 +9,12 @@ class StretchDetectionState {
   #stretchStatesConfig = {
     startCountdown: {
       duration: 30,
-      transition: this.#stretchDetectionStates.stretchNow,
+      nextStep: this.#stretchDetectionStates.stretchNow,
       type: "countdown",
     },
     stretchNow:  {
       duration: 30,
-      transition: this.#stretchDetectionStates.startCountdown,
+      nextStep: this.#stretchDetectionStates.startCountdown,
       type: "stretch",
     },
   };
@@ -24,9 +24,9 @@ class StretchDetectionState {
     this.currentStretchState = this.#stretchDetectionStates.startCountdown;
   }
 
-  // when transition is called move to the configured next state
-  transition() {
-    this.currentStretchState = this.#currentStateConfig().transition;
+  // when nextStep is called move to the configured next state
+  nextStep() {
+    this.currentStretchState = this.#currentStateConfig().nextStep;
   }
 
   // defines whether the current state detects the users stretch
@@ -43,7 +43,6 @@ class StretchDetectionState {
   currentType() {
     return this.#currentStateConfig().type;
   }
-
 
   // gets the configuration object for the current state
   #currentStateConfig() {
