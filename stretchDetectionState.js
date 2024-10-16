@@ -39,6 +39,12 @@ class StretchDetectionState {
     return this.#currentStateConfig().duration;
   }
 
+  // returns the type of the current state
+  currentType() {
+    return this.#currentStateConfig().type;
+  }
+
+
   // gets the configuration object for the current state
   #currentStateConfig() {
     return this.#stretchStatesConfig[this.currentStretchState];
