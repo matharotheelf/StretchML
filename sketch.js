@@ -48,6 +48,8 @@ function draw() {
   if(stretchDetectionState.isDetectionActive()) {
     processStretch();
   }
+
+  drawInfoText();
 }
 
 // Callback function for when bodyPose outputs data
@@ -105,6 +107,27 @@ function drawBodyPoints() {
       }
     }
   }
+}
+
+function drawInfoText() {
+  noStroke();
+  textSize(40);
+  fill(0, 255, 0);
+
+  switch(stretchDetectionState.currentType()) {
+    case "countdown":
+      text('Prepare for stretch in:', 6, 40);
+
+      break;
+    case "stretch":
+      text('Recording stretch', 6, 40);
+
+      break;
+    default:
+      text('Not Stetching', 6, 40);
+  }
+  
+  text(currentStateTime, 6, 85);
 }
 
 // function to extract stretch data from the current pose
