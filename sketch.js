@@ -11,12 +11,17 @@ let bodyPose;
 let poses = [];
 let connections;
 let timeAccumalator = 0;
-const poseSampleInterval = 500;
+
+const poseSampleInterval = 200;
+const stretchDetectionState = new StretchDetectionState();
+let currentStateTime = stretchDetectionState.currentDuration();
+
+let stretchDataTimeSeries = Array();
 
 function preload() {
   // Load the bodyPose model
   bodyPose = ml5.bodyPose();
-}
+};
 
 function setup() {
   createCanvas(640, 480);
@@ -32,20 +37,46 @@ function setup() {
   connections = bodyPose.getSkeleton();
 
   //every seconds tick the timer
-  setInterval(tickTimer, 1000)
+  setInterval(tickStateTimer, 1000);
 }
 
 function draw() {
   // Draw the webcam video
   image(video, 0, 0, width, height);
 
-  timeAccumalator += deltaTime;
-
-  if(timeAccumalator >= poseSampleInterval && poses.length == 1) {
-    extractStretchData(poses[0].keypoints);
-    timeAccumalator = 0;
+  // if the current state is active stetch detection process the stretch data
+  if(stretchDetectionState.isDetectionActive()) {
+    processStretchFrame();
   }
 
+  drawInfoText();
+}
+
+// Callback function for when bodyPose outputs data
+function gotPoses(results) {
+  // Save the output to the poses variable
+  poses = results;
+}
+
+function tickStateTimer() {
+  // decrement the time left for the state
+  currentStateTime--;
+
+  if(currentStateTime === 0) {
+    // if a detection state save the stretch data and clear
+    if(stretchDetectionState.isDetectionActive()) {
+      saveAndClearStretchData();
+    }
+
+    // transition to the next step
+    stretchDetectionState.nextStep();
+
+    // set the timer to the duration of the new state
+    currentStateTime = stretchDetectionState.currentDuration(); 
+  }
+}
+      
+function drawBodyPoints() {
   // Draw the skeleton connections
   for (let i = 0; i < poses.length; i++) {
     let pose = poses[i];
@@ -78,16 +109,62 @@ function draw() {
   }
 }
 
-// Callback function for when bodyPose outputs data
-function gotPoses(results) {
-  // Save the output to the poses variable
-  poses = results;
+function drawInfoText() {
+  noStroke();
+  textSize(40);
+  fill(0, 255, 0);
+
+  switch(stretchDetectionState.currentType()) {
+    case "countdown":
+      text('Prepare for stretch in:', 6, 40);
+
+      break;
+    case "stretch":
+      text('Recording stretch', 6, 40);
+
+      break;
+    default:
+      text('Not Stetching', 6, 40);
+  }
+  
+  text(currentStateTime, 6, 85);
 }
 
+// function to extract stretch data from the current pose
 function extractStretchData(currentPose) {
+  // extract stretch data from pose
   let stretchPoseData = new StretchPoseData(currentPose);
-  stretchPoseData.draw();
-  stretchPoseData.featuresArray();
 
-  return stretchPoseData
+  // draw stretch data to canvas
+  stretchPoseData.draw();
+
+  // add the stretch data to the time series for the whole stretch
+  stretchDataTimeSeries.push(stretchPoseData.featuresArray());
+}
+
+function saveAndClearStretchData() {
+  // output stretch data for debugging
+  console.log("Data");
+  console.log(stretchDataTimeSeries);
+  console.log("DataLength");
+  console.log(stretchDataTimeSeries.length);
+
+  // save the stretch data to a file
+  saveJSON(stretchDataTimeSeries, `stretchData_${new Date().toISOString()}.json`);
+
+  // clear the stretch data time series to restart for the next stretch
+  stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
+}
+
+function processStretchFrame() {
+  // increment time every frame
+  timeAccumalator += deltaTime;
+
+  // if the sample time has been reached extract the stretch data for processing
+  if(timeAccumalator >= poseSampleInterval && poses.length == 1) {
+    extractStretchData(poses[0].keypoints);
+
+    // set time accumalator back to zero for next frame
+    timeAccumalator = 0;
+  }
 }
