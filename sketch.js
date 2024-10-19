@@ -24,7 +24,7 @@ function preload() {
 };
 
 function setup() {
-  createCanvas(640, 480);
+  canvas = createCanvas(640, 480);
 
   // Create the video and hide it
   video = createCapture(VIDEO);
@@ -38,6 +38,11 @@ function setup() {
 
   //every seconds tick the timer
   setInterval(tickStateTimer, 1000);
+}
+
+// Function to delete the canvas
+function deleteCanvas() {
+  canvas.remove(); // This will remove the canvas from the DOM
 }
 
 function draw() {
@@ -159,8 +164,9 @@ function saveAndClearStretchData() {
   }
 
   
-  document.getElementById('stretchPanel').style.display = 'none';
-
+  //document.getElementById('stretchPanel').style.display = 'none';
+  deleteCanvas();
+  document.getElementById('resultPanel').style.display = 'block';
 
   // clear the stretch data time series to restart for the next stretch
   //stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
@@ -180,7 +186,7 @@ function processStretchFrame() {
 }
 
 // Function to transition to the next UI panel after detection ends
-function showNextPanel() {
-  document.getElementById('stretchPanel').style.display = 'none'; // Hide the stretch detection panel
-  document.getElementById('resultPanel').style.display = 'block'; // Show the results panel
-}
+// function showNextPanel() {
+//   document.getElementById('stretchPanel').style.display = 'none'; // Hide the stretch detection panel
+//   document.getElementById('resultPanel').style.display = 'block'; // Show the results panel
+// }
