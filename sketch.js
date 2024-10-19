@@ -156,16 +156,14 @@ function saveAndClearStretchData() {
 
   // Send the data to dtm.js for processing
   processStretchData(stretchDataTimeSeries);
-  if (canvas) {
-      canvas.remove(); // Remove the canvas from the DOM
-  }
 
-  video.remove(); // Remove the video capture element
-
-
+  // Instead of removing the canvas, just log the output or display something
+  // If needed, you can clear the previous plot or prepare for new data
   // Clear the stretch data time series to restart for the next stretch
   //stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
 }
+
+
 
 function processStretchFrame() {
   // increment time every frame
