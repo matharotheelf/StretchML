@@ -148,7 +148,7 @@ function extractStretchData(currentPose) {
 }
 
 function saveAndClearStretchData() {
-  // output stretch data for debugging
+  // Output stretch data for debugging
   console.log("Data");
   console.log(stretchDataTimeSeries);
   console.log("DataLength");
@@ -156,19 +156,14 @@ function saveAndClearStretchData() {
 
   // Send the data to dtm.js for processing
   processStretchData(stretchDataTimeSeries);
-
-  // Remove the existing stretch detection canvas
-  const canvas = document.querySelector('canvas'); // Select the p5.js canvas
   if (canvas) {
       canvas.remove(); // Remove the canvas from the DOM
   }
 
-  
-  //document.getElementById('stretchPanel').style.display = 'none';
-  deleteCanvas();
-  document.getElementById('resultPanel').style.display = 'block';
+  video.remove(); // Remove the video capture element
 
-  // clear the stretch data time series to restart for the next stretch
+
+  // Clear the stretch data time series to restart for the next stretch
   //stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
 }
 
