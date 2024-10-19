@@ -149,11 +149,21 @@ function saveAndClearStretchData() {
   console.log("DataLength");
   console.log(stretchDataTimeSeries.length);
 
-  // save the stretch data to a file
-  saveJSON(stretchDataTimeSeries, `stretchData_${new Date().toISOString()}.json`);
+  // Send the data to dtm.js for processing
+  processStretchData(stretchDataTimeSeries);
+
+  // Remove the existing stretch detection canvas
+  const canvas = document.querySelector('canvas'); // Select the p5.js canvas
+  if (canvas) {
+      canvas.remove(); // Remove the canvas from the DOM
+  }
+
+  
+  document.getElementById('stretchPanel').style.display = 'none';
+
 
   // clear the stretch data time series to restart for the next stretch
-  stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
+  //stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
 }
 
 function processStretchFrame() {
@@ -167,4 +177,10 @@ function processStretchFrame() {
     // set time accumalator back to zero for next frame
     timeAccumalator = 0;
   }
+}
+
+// Function to transition to the next UI panel after detection ends
+function showNextPanel() {
+  document.getElementById('stretchPanel').style.display = 'none'; // Hide the stretch detection panel
+  document.getElementById('resultPanel').style.display = 'block'; // Show the results panel
 }
