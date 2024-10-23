@@ -42,12 +42,14 @@ class RegistrationData {
     this.#leftHandPosition = createVector(keypoints[9].x, keypoints[9].y);
     this.#rightHandPosition = createVector(keypoints[10].x, keypoints[10].y);
 
+    // calculate arm displacement vectors for angles and normalisation lengths
     this.#leftUpperArmDisplacement = this.#calculateLeftUpperArmDisplacement(keypoints);
     this.#leftLowerArmDisplacement = this.#calculateLeftLowerArmDisplacement(keypoints);
 
     this.#rightUpperArmDisplacement = this.#calculateRightUpperArmDisplacement(keypoints);
     this.#rightLowerArmDisplacement = this.#calculateRightLowerArmDisplacement(keypoints);
 
+    // calculate and cache arm angles
     const leftUpperArmAngle = this.#calculateLeftUpperArmAngle();
     const leftLowerArmAngle = this.#calculateLeftLowerArmAngle();
     const rightUpperArmAngle = this.#calculateRightUpperArmAngle();
@@ -90,22 +92,22 @@ class RegistrationData {
   }
 
   #calculateLeftUpperArmAngle() {
-    // the angle between the left upper arm an horizontal
+    // the angle between the left upper arm and horizontal
     return tan(this.#leftUpperArmDisplacement.y/this.#leftUpperArmDisplacement.x);
   }
 
   #calculateLeftLowerArmAngle() {
-    // displacement between hand and elbow
+    // the angle between the left lower arm and horizontal
     return tan(this.#leftLowerArmDisplacement.y/this.#leftLowerArmDisplacement.x);
   }
 
   #calculateRightUpperArmAngle() {
-    // displacement between shoulder and elbow
+    // the angle between the right upper arm and horizontal
     return tan(this.#rightUpperArmDisplacement.y/this.#rightUpperArmDisplacement.x);
   }
 
   #calculateRightLowerArmAngle() {
-    // displacement between elbow and hand
+    // the angle between the right lower arm and horizontal
     return tan(this.#rightLowerArmDisplacement.y/this.#rightLowerArmDisplacement.x);
   }
 }
