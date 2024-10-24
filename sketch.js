@@ -57,8 +57,6 @@ function draw() {
       processStretchFrame();
 
       break;
-    default:
-      text('Not Stetching', 6, 40);
   }
 
   drawInfoText();
@@ -71,6 +69,7 @@ function gotPoses(results) {
 }
 
 function tickStateTimer() {
+  // only tick timer if the state is timed or the registration countdown has begun
   if (!stretchDetectionState.isTimedState() && !registrationCorrectStatus) return null;
 
   // decrement the time left for the state
@@ -142,7 +141,7 @@ function drawInfoText() {
 
       break;
     default:
-      text('Not Stetching', 6, 40);
+      text('Not Stretching', 6, 40);
   }
   
   // if in timer print the current countdown time
