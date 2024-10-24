@@ -11,12 +11,14 @@ let bodyPose;
 let poses = [];
 let connections;
 let timeAccumalator = 0;
+let registrationCorrectStatus = false;
 
 const poseSampleInterval = 200;
 const stretchDetectionState = new StretchDetectionState();
 let currentStateTime = stretchDetectionState.currentDuration();
 
 let stretchDataTimeSeries = Array();
+let registrationInfoText = "Move back with your arms stretched to the correct position.";
 
 function preload() {
   // Load the bodyPose model
@@ -44,9 +46,17 @@ function draw() {
   // Draw the webcam video
   image(video, 0, 0, width, height);
 
-  // if the current state is active stetch detection process the stretch data
-  if(stretchDetectionState.isDetectionActive()) {
-    processStretchFrame();
+  switch(stretchDetectionState.currentType()) {
+    case "registration":
+      processRegistrationFrame();
+
+      break;
+    case "countdown":
+      break;
+    case "stretch":
+      processStretchFrame();
+
+      break;
   }
 
   drawInfoText();
@@ -59,6 +69,9 @@ function gotPoses(results) {
 }
 
 function tickStateTimer() {
+  // only tick timer if the state is timed or the registration countdown has begun
+  if (!stretchDetectionState.isTimedState() && !registrationCorrectStatus) return null;
+
   // decrement the time left for the state
   currentStateTime--;
 
@@ -111,10 +124,14 @@ function drawBodyPoints() {
 
 function drawInfoText() {
   noStroke();
-  textSize(40);
+  textSize(30);
   fill(0, 255, 0);
 
   switch(stretchDetectionState.currentType()) {
+    case "registration":
+      text(registrationInfoText, 6, 40);
+
+      break;
     case "countdown":
       text('Prepare for stretch in:', 6, 40);
 
@@ -124,10 +141,13 @@ function drawInfoText() {
 
       break;
     default:
-      text('Not Stetching', 6, 40);
+      text('Not Stretching', 6, 40);
   }
   
-  text(currentStateTime, 6, 85);
+  // if in timer print the current countdown time
+  if(stretchDetectionState.isTimedState() || registrationCorrectStatus) {
+    text(currentStateTime, 6, 85);
+  }
 }
 
 // function to extract stretch data from the current pose
@@ -143,12 +163,6 @@ function extractStretchData(currentPose) {
 }
 
 function saveAndClearStretchData() {
-  // output stretch data for debugging
-  console.log("Data");
-  console.log(stretchDataTimeSeries);
-  console.log("DataLength");
-  console.log(stretchDataTimeSeries.length);
-
   // save the stretch data to a file
   saveJSON(stretchDataTimeSeries, `stretchData_${new Date().toISOString()}.json`);
 
@@ -166,5 +180,33 @@ function processStretchFrame() {
 
     // set time accumalator back to zero for next frame
     timeAccumalator = 0;
+  }
+}
+
+function processRegistrationFrame() {
+  // get newest registration status
+  const newRegistrationCorrectStatus = isWithinCorrectPosition();
+
+  // update the info text with the command of what next to do
+  registrationInfoText = newRegistrationCorrectStatus ? "Great, you are in position." : "Move back to the correct position.";
+
+  // if newly correct status then reset the state timer to 3 second countdown
+  if(newRegistrationCorrectStatus && !registrationCorrectStatus) {
+    currentStateTime = 3;
+  }
+  
+  // update the global registration state variable
+  registrationCorrectStatus = newRegistrationCorrectStatus;
+}
+
+function isWithinCorrectPosition() {
+  if(poses.length == 1) {
+    // collect the new registration data
+    registrationData = new RegistrationData(poses[0].keypoints);
+
+    // return if within the correct position for registration
+    return registrationData.isPositionCorrect && registrationData.areArmAnglesCorrect;
+  } else {
+    return false;
   }
 }
