@@ -4,6 +4,7 @@ class StretchDetectionState {
     registration: "registration",
     startCountdown: "startCountdown",
     stretchNow: "stretchNow",
+    scoreDisplay: "scoreDisplay",
   };
 
   // define the configuration for the behavior of each state
@@ -20,8 +21,13 @@ class StretchDetectionState {
     },
     stretchNow:  {
       duration: 30,
-      nextStep: this.#stretchDetectionStates.startCountdown,
+      nextStep: this.#stretchDetectionStates.scoreDisplay,
       type: "stretch",
+    },
+    scoreDisplay:  {
+      duration: 30,
+      nextStep: this.#stretchDetectionStates.startCountdown,
+      type: "score",
     },
   };
 

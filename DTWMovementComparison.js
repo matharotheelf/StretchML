@@ -1,13 +1,14 @@
 class DTWMovementComparison {
   constructor(recordedTimeSeries, idealStretchTimeSeries) {
-    this.comparisonCost = this.#calculateDTWComparisonCost(recordedTimeSeries, idealStretchTimeSeries);
-  }
+    this.normalizedCost = this.#calculateDTWComparisonCost(recordedTimeSeries, idealStretchTimeSeries);
+  };
 
   // 3. Dynamic programming alignment path
   // Computes the optimal alignment path between x_seq and y_seq using dynamic programming.
   // Cost matrix is filled using a recurrence relation where each cell contains the minimum cost
   // to reach that point from the start, accounting for the distances between corresponding points in the sequences.
   #computeAlignmentPath(distMat) {
+
       const [rows, cols] = [distMat.length, distMat[0].length];
       
       // Initialize the cost matrix with "Infinity" to represent uncomputed values.
@@ -52,24 +53,21 @@ class DTWMovementComparison {
       return { path: path.reverse(), costMat, normalizedCost };
   };
 
-  // 1. Cosine distance function
-  // Computes cosine distance between two vectors a and b.
-  // Cosine distance = 1 - cosine similarity. Used to measure the angular difference between two vectors.
-  #cosineDistance(a, b) {
-    return 1 - math.dot(a, b) / (math.norm(a) * math.norm(b));
-  };
-
-  // 2. Calculate distance matrix
-  // Computes the pairwise cosine distance between every pair of vectors in x_seq and y_seq.
-  // Returns a 2D matrix where element (i, j) contains the cosine distance between x_seq[i] and y_seq[j].
-  #computeDistanceMatrix(xSeq, ySeq) {
-    return xSeq.map(x => ySeq.map(y => this.#cosineDistance(x, y)));
-  };
-
   // 5. Process stretch data after the detection is complete
-  #calculateDTWComparisonCost(recordedTimeSeries, idealStretchTimeSeries) {
+  #calculateDTWComparisonCost(recordedStetchTimeSeries, idealStretchTimeSeries) {
+      // 1. Cosine distance function
+      // Computes cosine distance between two vectors a and b.
+      // Cosine distance = 1 - cosine similarity. Used to measure the angular difference between two vectors.
+      const cosineDistance = (a, b) => 1 - math.dot(a, b) / (math.norm(a) * math.norm(b));
+
+      // 2. Calculate distance matrix
+      // Computes the pairwise cosine distance between every pair of vectors in x_seq and y_seq.
+      // Returns a 2D matrix where element (i, j) contains the cosine distance between x_seq[i] and y_seq[j].
+      const computeDistanceMatrix = (xSeq, ySeq) =>
+        xSeq.map(x => ySeq.map(y => cosineDistance(x, y)));
+
       // Compute distance matrix between the stretch data and reference sequence
-      const distMat = this.#computeDistanceMatrix(stretchDataTimeSeries, referenceSeq);
+      const distMat = computeDistanceMatrix(recordedStetchTimeSeries, idealStretchTimeSeries);
 
       // Call dp() to get the optimal alignment path and normalized cost
       const { path, costMat, normalizedCost } = this.#computeAlignmentPath(distMat);
@@ -79,6 +77,6 @@ class DTWMovementComparison {
       console.log("Distance Matrix:", distMat);
       console.log("Alignment Path:", path);
 
-      return normalizedCost;
+      return normalizedCost.toFixed(5);
   };
-}
+};

@@ -13,6 +13,10 @@ let connections;
 let timeAccumalator = 0;
 let registrationCorrectStatus = false;
 
+let exampleStretchTimeSeries;
+let stretchDataJson;
+let stretchScore;
+
 const poseSampleInterval = 200;
 const stretchDetectionState = new StretchDetectionState();
 let currentStateTime = stretchDetectionState.currentDuration();
@@ -23,6 +27,8 @@ let registrationInfoText = "Move back with your arms stretched to the correct po
 function preload() {
   // Load the bodyPose model
   bodyPose = ml5.bodyPose();
+
+  stretchDataJson = loadJSON('StretchData/stretchData_main.json');
 };
 
 function setup() {
@@ -32,6 +38,8 @@ function setup() {
   video = createCapture(VIDEO);
   video.size(640, 480);
   video.hide();
+
+  exampleStretchTimeSeries = Array.from(Object.values(stretchDataJson));
 
   // Start detecting poses in the webcam video
   bodyPose.detectStart(video, gotPoses);
@@ -47,14 +55,14 @@ function draw() {
   image(video, 0, 0, width, height);
 
   // if the current state is active stetch detection process the stretch data
-  if(stretchDetectionState.isDetectionActive()) {
-    processStretchFrame();
   switch(stretchDetectionState.currentType()) {
     case "registration":
       processRegistrationFrame();
 
       break;
     case "countdown":
+      break;
+    case "score":
       break;
     case "stretch":
       processStretchFrame();
@@ -143,12 +151,14 @@ function drawInfoText() {
       text('Recording stretch', 6, 40);
 
       break;
+    case "score":
+      text(`Final score: ${stretchScore}`, 6, 40);
+
+      break;
     default:
       text('Not Stretching', 6, 40);
   }
-  
-  text(currentStateTime, 6, 85);
-  
+ 
   // if in timer print the current countdown time
   if(stretchDetectionState.isTimedState() || registrationCorrectStatus) {
     text(currentStateTime, 6, 85);
@@ -174,8 +184,12 @@ function saveAndClearStretchData() {
   console.log("DataLength");
   console.log(stretchDataTimeSeries.length);
 
-  // Send the data to dtm.js for processing
-  processStretchData(stretchDataTimeSeries);
+  const dtwMovementComparison = new DTWMovementComparison(stretchDataTimeSeries, exampleStretchTimeSeries);
+  
+  console.log("Final Score");
+  console.log(dtwMovementComparison.normalizedCost);
+
+  stretchScore = dtwMovementComparison.normalizedCost;
 
   // Instead of removing the canvas, just log the output or display something
   // If needed, you can clear the previous plot or prepare for new data
@@ -195,12 +209,6 @@ function processStretchFrame() {
     timeAccumalator = 0;
   }
 }
-
-// Function to transition to the next UI panel after detection ends
-// function showNextPanel() {
-//   document.getElementById('stretchPanel').style.display = 'none'; // Hide the stretch detection panel
-//   document.getElementById('resultPanel').style.display = 'block'; // Show the results panel
-// }
 
 function processRegistrationFrame() {
   // get newest registration status
