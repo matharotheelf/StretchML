@@ -33,7 +33,9 @@ function preload() {
 };
 
 function setup() {
-  createCanvas(640, 480);
+  // take this one
+  createCanvas(853, 640);
+
 
   // Create the video and hide it
   video = createCapture(VIDEO);
@@ -179,7 +181,8 @@ function drawGreyBox() {
   noStroke(); // Disable stroke
   
   // Define box dimensions
-  let boxWidth = 600; // Set the desired width of the box
+  // take this one
+  let boxWidth = 840; // Set the desired width of the box
   let boxHeight = 80; // Height of the box
   let cornerRadius = 20; // Radius for rounded corners
 
