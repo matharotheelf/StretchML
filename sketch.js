@@ -152,7 +152,7 @@ function drawInfoText() {
 
       break;
     case "score":
-      text(`Final score: ${stretchScore}`, 6, 40);
+      text(`Final Result: ${stretchScore}`, 6, 40);
 
       break;
     default:
