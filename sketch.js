@@ -41,7 +41,7 @@ function setup() {
 
   // Create the video and hide it
   video = createCapture(VIDEO);
-  video.size(640, 480);
+  video.size(853, 640);
   video.hide();
 
   exampleStretchTimeSeries = Array.from(Object.values(stretchDataJson));
@@ -88,7 +88,16 @@ function draw() {
       break;
 
     case "countdown":
-      image(gifimage, width / 2 - gifimage.width / 2, height / 2 - gifimage.height / 2); // Display GIF centered
+   // Determine the width and height of the GIF
+    const gifWidth = 150;  // Desired width of the GIF
+    const gifHeight = 200; // Desired height of the GIF
+
+    // Calculate the position for the GIF near the right corner
+    const xPos = width - gifWidth - 20; // 20 pixels from the right edge
+    const yPos = height / 4; // Move closer to the top edge
+
+    // Draw the GIF at the calculated position
+    image(gifimage, xPos, yPos, gifWidth, gifHeight);
       break;
 
     case "stretch":
