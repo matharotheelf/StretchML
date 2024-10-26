@@ -1,6 +1,7 @@
 class StretchDetectionState {
   // define all the allowed stretch detection states
   #stretchDetectionStates = {
+    welcome: "welcome",
     registration: "registration",
     startCountdown: "startCountdown",
     stretchNow: "stretchNow",
@@ -9,6 +10,11 @@ class StretchDetectionState {
 
   // define the configuration for the behavior of each state
   #stretchStatesConfig = {
+    welcome: {
+      duration: 11,
+      nextStep: this.#stretchDetectionStates.registration,
+      type: "welcome",
+    },
     registration: {
       duration: null,
       nextStep: this.#stretchDetectionStates.startCountdown,
@@ -33,7 +39,7 @@ class StretchDetectionState {
 
   constructor() {
     // set the inital stretch state 
-    this.currentStretchState = this.#stretchDetectionStates.registration;
+    this.currentStretchState = this.#stretchDetectionStates.welcome;
   }
 
   // when nextStep is called move to the configured next state

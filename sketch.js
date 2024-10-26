@@ -10,7 +10,7 @@ let video;
 let bodyPose;
 let poses = [];
 let connections;
-let timeAccumalator = 0;
+let timeAccumulator = 0;
 let registrationCorrectStatus = false;
 
 let exampleStretchTimeSeries;
@@ -52,28 +52,50 @@ function setup() {
   setInterval(tickStateTimer, 1000);
 }
 
+const welcomeMessagesList = [
+  { time: 1, message: "Welcome!" },
+  { time: 3, message: "Let's Set You Up for Stretching Success!" },
+  { time: 6, message: "Sit down and position yourself in front of the camera." },
+  { time: 11, message: "Move far back until the top half of your body is fully visible, with some space around you." }
+];
+
+let elapsedTime = 0; // Track the elapsed time in the welcome state
+
 function draw() {
   // Draw the webcam video
   image(video, 0, 0, width, height);
 
-  // if the current state is active stetch detection process the stretch data
+  // Update the elapsed time if in welcome state
+  if (stretchDetectionState.currentType() === "welcome") {
+    elapsedTime += deltaTime / 1000; // Convert milliseconds to seconds
+  }
+
+  // State handling logic
   switch(stretchDetectionState.currentType()) {
+    case "welcome":
+      // If time exceeds the last message time, move to the next message
+      if (elapsedTime > welcomeMessagesList[welcomeMessagesList.length - 1].time) {
+        stretchDetectionState.nextStep(); // Move to next state
+        elapsedTime = 0; // Reset elapsed time
+      }
+      break;
+
     case "registration":
       processRegistrationFrame();
-
       break;
+
     case "countdown":
       break;
-    case "score":
-      break;
+
     case "stretch":
       processStretchFrame();
-
       break;
   }
 
+  drawGreyBox();
   drawInfoText();
 }
+
 
 // Callback function for when bodyPose outputs data
 function gotPoses(results) {
@@ -101,71 +123,110 @@ function tickStateTimer() {
     currentStateTime = stretchDetectionState.currentDuration(); 
   }
 }
-      
-function drawBodyPoints() {
-  // Draw the skeleton connections
-  for (let i = 0; i < poses.length; i++) {
-    let pose = poses[i];
-    for (let j = 0; j < connections.length; j++) {
-      let pointAIndex = connections[j][0];
-      let pointBIndex = connections[j][1];
-      let pointA = pose.keypoints[pointAIndex];
-      let pointB = pose.keypoints[pointBIndex];
-      // Only draw a line if both points are confident enough
-      if (pointA.confidence > 0.1 && pointB.confidence > 0.1) {
-        stroke(255, 0, 0);
-        strokeWeight(2);
-        line(pointA.x, pointA.y, pointB.x, pointB.y);
-      }
-    }
-  }
+
+// For Debugging 
+// function drawBodyPoints() {
+//   // Draw the skeleton connections
+//   for (let i = 0; i < poses.length; i++) {
+//     let pose = poses[i];
+//     for (let j = 0; j < connections.length; j++) {
+//       let pointAIndex = connections[j][0];
+//       let pointBIndex = connections[j][1];
+//       let pointA = pose.keypoints[pointAIndex];
+//       let pointB = pose.keypoints[pointBIndex];
+//       // Only draw a line if both points are confident enough
+//       if (pointA.confidence > 0.1 && pointB.confidence > 0.1) {
+//         stroke(255, 0, 0);
+//         strokeWeight(2);
+//         line(pointA.x, pointA.y, pointB.x, pointB.y);
+//       }
+//     }
+//   }
 
   // Draw all the tracked landmark points
-  for (let i = 0; i < poses.length; i++) {
-    let pose = poses[i];
-    for (let j = 0; j < pose.keypoints.length; j++) {
-      let keypoint = pose.keypoints[j];
-      // Only draw a circle if the keypoint's confidence is bigger than 0.1
-      if (keypoint.confidence > 0.1) {
-        fill(0, 255, 0);
-        noStroke();
-        circle(keypoint.x, keypoint.y, 10);
-      }
-    }
-  }
-}
+  // for (let i = 0; i < poses.length; i++) {
+  //   let pose = poses[i];
+  //   for (let j = 0; j < pose.keypoints.length; j++) {
+  //     let keypoint = pose.keypoints[j];
+  //     // Only draw a circle if the keypoint's confidence is bigger than 0.1
+  //     if (keypoint.confidence > 0.1) {
+  //       fill(0, 255, 0);
+  //       noStroke();
+  //       circle(keypoint.x, keypoint.y, 10);
+  //     }
+  //   }
+  // }
+// }
 
 function drawInfoText() {
   noStroke();
-  textSize(30);
-  fill(0, 255, 0);
+  textSize(20);
+  textAlign(CENTER);  // Center text horizontally
+  fill(0, 0, 0);
 
-  switch(stretchDetectionState.currentType()) {
+  let baseY = height - 40; // Base Y position for the main text
+  let mainTextY = baseY;   // Initialize the Y position for the main text
+
+  textFont("Inter");
+  // Determine the main text based on current state
+  switch (stretchDetectionState.currentType()) {
+    case "welcome":
+      text(welcomeMessages(), width / 2, mainTextY);
+      break;
+
     case "registration":
-      text(registrationInfoText, 6, 40);
-
+      text(registrationInfoText, width / 2, mainTextY);
       break;
+
     case "countdown":
-      text('Prepare for stretch in:', 6, 40);
-
+      text('Now relax.. prepare for stretch', width / 2, mainTextY);
       break;
+
     case "stretch":
-      text('Recording stretch', 6, 40);
-
+      text('Recording stretch', width / 2, mainTextY);
       break;
+
     case "score":
-      text(`Final Result: ${stretchScore}`, 6, 40);
-
+      text(`Final Result: ${stretchScore}`, width / 2, mainTextY);
       break;
+
     default:
-      text('Not Stretching', 6, 40);
+      text('Not Stretching', width / 2, mainTextY);
   }
- 
-  // if in timer print the current countdown time
-  if(stretchDetectionState.isTimedState() || registrationCorrectStatus) {
-    text(currentStateTime, 6, 85);
+
+  // Calculate the height of the main text
+  let textHeight = textAscent() + textDescent(); // Height of the drawn text
+
+  // Check if in timed state to display the countdown
+  if (stretchDetectionState.isTimedState() || registrationCorrectStatus) {
+    mainTextY = baseY - textHeight - 40; 
+
+    // Draw the countdown text 
+    let countdownY = mainTextY + textHeight + 10; 
+    text(currentStateTime, width / 2, countdownY);
   }
 }
+
+
+
+
+function drawGreyBox() {
+  // Set fill color of box 
+  fill(220, 220, 220, 200);
+  noStroke(); // Disable stroke
+  
+  // Define box dimensions
+  let boxWidth = 600; // Set the desired width of the box
+  let boxHeight = 80; // Height of the box
+  let cornerRadius = 20; // Radius for rounded corners
+
+  // Calculate x position to center the box
+  let xPos = (width - boxWidth) / 2; // Centering the box
+
+  // Draw a rectangle (x, y, width, height, radius)
+  rect(xPos, height - boxHeight - 10, boxWidth, boxHeight, cornerRadius);
+}
+
 
 // function to extract stretch data from the current pose
 function extractStretchData(currentPose) {
@@ -212,19 +273,21 @@ function saveAndClearStretchData() {
   }
 }
 
+// time keeper
 function processStretchFrame() {
   // increment time every frame
-  timeAccumalator += deltaTime;
+  timeAccumulator += deltaTime;
 
   // if the sample time has been reached extract the stretch data for processing
-  if(timeAccumalator >= poseSampleInterval && poses.length == 1) {
+  if(timeAccumulator >= poseSampleInterval && poses.length === 1) {
     extractStretchData(poses[0].keypoints);
 
     // set time accumalator back to zero for next frame
-    timeAccumalator = 0;
+    timeAccumulator = 0;
   }
 }
 
+// Checking if in right place
 function processRegistrationFrame() {
   // get newest registration status
   const newRegistrationCorrectStatus = isWithinCorrectPosition();
@@ -241,6 +304,20 @@ function processRegistrationFrame() {
   registrationCorrectStatus = newRegistrationCorrectStatus;
 }
 
+
+
+
+function welcomeMessages() {
+  // Find the appropriate message based on elapsed time
+  for (let i = 0; i < welcomeMessagesList.length; i++) {
+    if (elapsedTime < welcomeMessagesList[i].time) {
+      return welcomeMessagesList[i].message; // Return the current message
+    }
+  }
+  return "Welcome!"; // Default message if no valid message found
+}
+
+// Check if in right position
 function isWithinCorrectPosition() {
   if(poses.length == 1) {
     // collect the new registration data
