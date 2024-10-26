@@ -84,15 +84,15 @@ class DTWMovementComparison {
 
       switch (true) {
           case cost < 0.001:
-              return "Perfect!";
+              return "Perfect! 🎉";
           case cost < 0.005:
-              return "Great";
+              return "Great 😊";
           case cost < 0.01:
-              return "Good";
+              return "Good 🙂";
           case cost < 0.05:
-              return "Okay";
+              return "Okay 😐";
           default:
-              return "Try Again";
+              return "Try Again 😕";
   }
 
   };
