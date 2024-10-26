@@ -1,0 +1,9 @@
+/* Center canvas horizontally on the page */
+html, body {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: flex-start; /* Align to top */
+    height: 100vh;
+    margin: 0;
+  }
+  

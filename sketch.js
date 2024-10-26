@@ -138,34 +138,38 @@ function tickStateTimer() {
 function drawInfoText() {
   noStroke();
   textSize(30);
+  textAlign(CENTER);  // Center text horizontally
   fill(0, 0, 0);
 
-  switch(stretchDetectionState.currentType()) {
+  let baseY = height - 40;
+
+  switch (stretchDetectionState.currentType()) {
     case "registration":
-      text(registrationInfoText, 6, 40);
-
+      text(registrationInfoText, width / 2, baseY);  // Centered horizontally
       break;
+
     case "countdown":
-      text('Now you can Relax your arms.. Prepare for stretch in:', 6, 40);
-
+      text('Now relax.. prepare for stretch in:', width / 2, baseY);  // Centered horizontally
       break;
+
     case "stretch":
-      text('Recording stretch', 6, 40);
-
+      text('Recording stretch', width / 2, baseY);  // Centered horizontally
       break;
+
     case "score":
-      text(`Final Result: ${stretchScore}`, 6, 40);
-
+      text(`Final Result: ${stretchScore}`, width / 2, baseY);  // Centered horizontally
       break;
+
     default:
-      text('Not Stretching', 6, 40);
+      text('Not Stretching', width / 2, baseY);  // Centered horizontally
   }
- 
-  // if in timed state, print the current countdown time
-  if(stretchDetectionState.isTimedState() || registrationCorrectStatus) {
-    text(currentStateTime, 6, 85);
+
+  // If in timed state, display the countdown time just above the main message
+  if (stretchDetectionState.isTimedState() || registrationCorrectStatus) {
+    text(currentStateTime, width / 2, baseY - 45);  // Centered and offset above the main text
   }
 }
+
 
 function drawGreyBox(){
      
@@ -173,8 +177,7 @@ function drawGreyBox(){
     fill(80, 80, 80, 127);
     noStroke();    // Disable stroke
     // Draw a rectangle (x, y, width, height)
-    rect(0, 0, 10000, 50);
-
+    rect(0, height - 80, width, 70);
 }
 
 // function to extract stretch data from the current pose
