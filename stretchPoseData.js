@@ -78,7 +78,7 @@ class StretchPoseData {
 
   // visualise all of the extracted displacement vectors
   draw() {
-    stroke(255, 165, 0);
+    stroke(98, 151, 247, 100);
     strokeWeight(10);
 
     line(this.#midShoulderPosition.x, this.#midShoulderPosition.y, this.#nosePosition.x, this.#nosePosition.y);

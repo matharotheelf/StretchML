@@ -283,7 +283,7 @@ function processRegistrationFrame() {
   const newRegistrationCorrectStatus = isWithinCorrectPosition();
 
   // update the info text with the command of what next to do
-  registrationInfoText = newRegistrationCorrectStatus ? "Great, you are in position." : "Move back to the correct position.";
+  registrationInfoText = newRegistrationCorrectStatus ? "Hold pose for a few seconds." : "We didn't quite get it. Let's quickly try again.";
 
   // if newly correct status then reset the state timer to 3 second countdown
   if(newRegistrationCorrectStatus && !registrationCorrectStatus) {
