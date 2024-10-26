@@ -134,50 +134,60 @@ function tickStateTimer() {
   // }
 // }
 
-// TODO remove current Type
 function drawInfoText() {
   noStroke();
   textSize(30);
   textAlign(CENTER);  // Center text horizontally
   fill(0, 0, 0);
 
-  let baseY = height - 40;
+  let baseY = height - 40; // Base Y position for the main text
+  let mainTextY = baseY;   // Initialize the Y position for the main text
 
+  // Determine the main text based on current state
   switch (stretchDetectionState.currentType()) {
     case "registration":
-      text(registrationInfoText, width / 2, baseY);  // Centered horizontally
+      text(registrationInfoText, width / 2, mainTextY);
       break;
 
     case "countdown":
-      text('Now relax.. prepare for stretch in:', width / 2, baseY);  // Centered horizontally
+      text('Now relax.. prepare for stretch', width / 2, mainTextY);
       break;
 
     case "stretch":
-      text('Recording stretch', width / 2, baseY);  // Centered horizontally
+      text('Recording stretch', width / 2, mainTextY);
       break;
 
     case "score":
-      text(`Final Result: ${stretchScore}`, width / 2, baseY);  // Centered horizontally
+      text(`Final Result: ${stretchScore}`, width / 2, mainTextY);
       break;
 
     default:
-      text('Not Stretching', width / 2, baseY);  // Centered horizontally
+      text('Not Stretching', width / 2, mainTextY);
   }
 
-  // If in timed state, display the countdown time just above the main message
+  // Calculate the height of the main text
+  let textHeight = textAscent() + textDescent(); // Height of the drawn text
+
+  // Check if in timed state to display the countdown
   if (stretchDetectionState.isTimedState() || registrationCorrectStatus) {
-    text(currentStateTime, width / 2, baseY - 45);  // Centered and offset above the main text
+    mainTextY = baseY - textHeight - 40; 
+
+    // Draw the countdown text 
+    let countdownY = mainTextY + textHeight + 10; 
+    text(currentStateTime, width / 2, countdownY);
   }
 }
+
+
 
 
 function drawGreyBox(){
      
     // Set fill color of box 
-    fill(80, 80, 80, 127);
+    fill(120, 120, 120, 170);
     noStroke();    // Disable stroke
     // Draw a rectangle (x, y, width, height)
-    rect(0, height - 80, width, 70);
+    rect(0, height - 120, width, 120);
 }
 
 // function to extract stretch data from the current pose
