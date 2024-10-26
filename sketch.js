@@ -14,6 +14,8 @@ let timeAccumalator = 0;
 let registrationCorrectStatus = false;
 
 let exampleStretchTimeSeries;
+let exampleStretchTimeSeries;
+
 let stretchDataJson;
 let stretchScore;
 
@@ -191,6 +193,17 @@ function saveAndClearStretchData() {
     console.log(dtwMovementComparison.normalizedCost);
 
     stretchScore = dtwMovementComparison.normalizedCost;
+
+    const speedMovementComparison = new MovementSpeedComparison(stretchDataTimeSeries, exampleStretchTimeSeries);
+
+    console.log("Speed Score");
+    console.log(speedMovementComparison.comparisonScore);
+
+    console.log("Fast Speed Score");
+    console.log(speedMovementComparison.fastComparisonScore);
+
+    stretchScore = dtwMovementComparison.normalizedCost;
+
 
     // Instead of removing the canvas, just log the output or display something
     // If needed, you can clear the previous plot or prepare for new data

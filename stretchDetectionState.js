@@ -15,7 +15,7 @@ class StretchDetectionState {
       type: "registration",
     },
     startCountdown: {
-      duration: 30,
+      duration: 1,
       nextStep: this.#stretchDetectionStates.stretchNow,
       type: "countdown",
     },
