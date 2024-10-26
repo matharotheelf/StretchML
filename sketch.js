@@ -184,17 +184,19 @@ function saveAndClearStretchData() {
   console.log("DataLength");
   console.log(stretchDataTimeSeries.length);
 
-  const dtwMovementComparison = new DTWMovementComparison(stretchDataTimeSeries, exampleStretchTimeSeries);
-  
-  console.log("Final Score");
-  console.log(dtwMovementComparison.normalizedCost);
+  if(stretchDataTimeSeries.length != 0) {
+    const dtwMovementComparison = new DTWMovementComparison(stretchDataTimeSeries, exampleStretchTimeSeries);
 
-  stretchScore = dtwMovementComparison.normalizedCost;
+    console.log("Final Score");
+    console.log(dtwMovementComparison.normalizedCost);
 
-  // Instead of removing the canvas, just log the output or display something
-  // If needed, you can clear the previous plot or prepare for new data
-  // Clear the stretch data time series to restart for the next stretch
-  stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
+    stretchScore = dtwMovementComparison.normalizedCost;
+
+    // Instead of removing the canvas, just log the output or display something
+    // If needed, you can clear the previous plot or prepare for new data
+    // Clear the stretch data time series to restart for the next stretch
+    stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
+  }
 }
 
 function processStretchFrame() {
