@@ -77,6 +77,23 @@ class DTWMovementComparison {
       console.log("Distance Matrix:", distMat);
       console.log("Alignment Path:", path);
 
-      return normalizedCost.toFixed(5);
+      //return normalizedCost.toFixed(5);
+      const cost = normalizedCost.toFixed(5);
+
+
+
+      switch (true) {
+          case cost < 0.001:
+              return "Perfect!";
+          case cost < 0.005:
+              return "Great";
+          case cost < 0.01:
+              return "Good";
+          case cost < 0.05:
+              return "Okay";
+          default:
+              return "Try Again";
+  }
+
   };
 };
