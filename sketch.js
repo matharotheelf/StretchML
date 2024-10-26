@@ -24,12 +24,15 @@ let currentStateTime = stretchDetectionState.currentDuration();
 
 let stretchDataTimeSeries = Array();
 let registrationInfoText = "Move back with your arms stretched to the correct position.";
+let gifimage;
+
 
 function preload() {
   // Load the bodyPose model
   bodyPose = ml5.bodyPose();
 
   stretchDataJson = loadJSON('StretchData/stretchData_main.json');
+  gifimage = loadImage("gifs/stretch_1.gif");
 };
 
 function setup() {
@@ -39,7 +42,7 @@ function setup() {
 
   // Create the video and hide it
   video = createCapture(VIDEO);
-  video.size(640, 480);
+  video.size(853, 640);
   video.hide();
 
   exampleStretchTimeSeries = Array.from(Object.values(stretchDataJson));
@@ -72,6 +75,16 @@ function draw() {
       break;
 
     case "countdown":
+   // Determine the width and height of the GIF
+    const gifWidth = 150;  // Desired width of the GIF
+    const gifHeight = 200; // Desired height of the GIF
+
+    // Calculate the position for the GIF near the right corner
+    const xPos = width - gifWidth - 20; // 20 pixels from the right edge
+    const yPos = height / 4; // Move closer to the top edge
+
+    // Draw the GIF at the calculated position
+    image(gifimage, xPos, yPos, gifWidth, gifHeight);
       break;
 
     case "stretch":
@@ -147,11 +160,11 @@ function tickStateTimer() {
 
 function drawInfoText() {
   noStroke();
-  textSize(20);
+  textSize(17);
   textAlign(CENTER);  // Center text horizontally
   fill(0, 0, 0);
 
-  let baseY = height - 40; // Base Y position for the main text
+  let baseY = height - 50; // Base Y position for the main text
   let mainTextY = baseY;   // Initialize the Y position for the main text
 
   textFont("Inter");
@@ -170,27 +183,38 @@ function drawInfoText() {
     mainTextY = baseY - textHeight - 40; 
 
     // Draw the countdown text 
-    let countdownY = mainTextY + textHeight + 10; 
+    let countdownY = mainTextY + textHeight + 20; 
     text(currentStateTime, width / 2, countdownY);
   }
 }
 
 function drawGreyBox() {
+
+
+  
   // Set fill color of box 
   fill(220, 220, 220, 200);
   noStroke(); // Disable stroke
   
   // Define box dimensions
   // take this one
-  let boxWidth = 840; // Set the desired width of the box
-  let boxHeight = 80; // Height of the box
-  let cornerRadius = 20; // Radius for rounded corners
+  let boxWidth = 800; // Set the desired width of the box
+  let boxHeight = 70; // Height of the box
+  let cornerRadius = 10; // Radius for rounded corners
 
   // Calculate x position to center the box
   let xPos = (width - boxWidth) / 2; // Centering the box
 
-  // Draw a rectangle (x, y, width, height, radius)
-  rect(xPos, height - boxHeight - 10, boxWidth, boxHeight, cornerRadius);
+
+  rect(xPos, height - boxHeight - 20, boxWidth, boxHeight, cornerRadius);
+
+    // Set the shadow properties
+    drawingContext.shadowColor = color(66, 66, 66, 20); // Set shadow color with alpha for transparency
+    drawingContext.shadowBlur = 15; // Set shadow blur amount
+    drawingContext.shadowOffsetX = 5; // Horizontal shadow offset
+    drawingContext.shadowOffsetY = 5; // Vertical shadow offset
+    // Draw a rectangle (x, y, width, height, radius)
+    // test delete
 }
 
 
