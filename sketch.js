@@ -50,28 +50,50 @@ function setup() {
   setInterval(tickStateTimer, 1000);
 }
 
+const welcomeMessagesList = [
+  { time: 1, message: "Welcome!" },
+  { time: 3, message: "Let's Set You Up for Stretching Success!" },
+  { time: 6, message: "Sit down and position yourself in front of the camera." },
+  { time: 11, message: "Move far back until the top half of your body is fully visible, with some space around you." }
+];
+
+let elapsedTime = 0; // Track the elapsed time in the welcome state
+
 function draw() {
   // Draw the webcam video
   image(video, 0, 0, width, height);
 
-  // if the current state is active stetch detection process the stretch data
+  // Update the elapsed time if in welcome state
+  if (stretchDetectionState.currentType() === "welcome") {
+    elapsedTime += deltaTime / 1000; // Convert milliseconds to seconds
+  }
+
+  // State handling logic
   switch(stretchDetectionState.currentType()) {
+    case "welcome":
+      // If time exceeds the last message time, move to the next message
+      if (elapsedTime > welcomeMessagesList[welcomeMessagesList.length - 1].time) {
+        stretchDetectionState.nextStep(); // Move to next state
+        elapsedTime = 0; // Reset elapsed time
+      }
+      break;
+
     case "registration":
       processRegistrationFrame();
-
       break;
+
     case "countdown":
       break;
-    case "score":
-      break;
+
     case "stretch":
       processStretchFrame();
-
       break;
   }
+
   drawGreyBox();
   drawInfoText();
 }
+
 
 // Callback function for when bodyPose outputs data
 function gotPoses(results) {
@@ -136,15 +158,20 @@ function tickStateTimer() {
 
 function drawInfoText() {
   noStroke();
-  textSize(30);
+  textSize(20);
   textAlign(CENTER);  // Center text horizontally
   fill(0, 0, 0);
 
   let baseY = height - 40; // Base Y position for the main text
   let mainTextY = baseY;   // Initialize the Y position for the main text
 
+  textFont("Inter");
   // Determine the main text based on current state
   switch (stretchDetectionState.currentType()) {
+    case "welcome":
+      text(welcomeMessages(), width / 2, mainTextY);
+      break;
+
     case "registration":
       text(registrationInfoText, width / 2, mainTextY);
       break;
@@ -181,14 +208,23 @@ function drawInfoText() {
 
 
 
-function drawGreyBox(){
-     
-    // Set fill color of box 
-    fill(120, 120, 120, 170);
-    noStroke();    // Disable stroke
-    // Draw a rectangle (x, y, width, height)
-    rect(0, height - 120, width, 120);
+function drawGreyBox() {
+  // Set fill color of box 
+  fill(220, 220, 220, 200);
+  noStroke(); // Disable stroke
+  
+  // Define box dimensions
+  let boxWidth = 600; // Set the desired width of the box
+  let boxHeight = 80; // Height of the box
+  let cornerRadius = 20; // Radius for rounded corners
+
+  // Calculate x position to center the box
+  let xPos = (width - boxWidth) / 2; // Centering the box
+
+  // Draw a rectangle (x, y, width, height, radius)
+  rect(xPos, height - boxHeight - 10, boxWidth, boxHeight, cornerRadius);
 }
+
 
 // function to extract stretch data from the current pose
 function extractStretchData(currentPose) {
@@ -251,6 +287,19 @@ function processRegistrationFrame() {
   
   // update the global registration state variable
   registrationCorrectStatus = newRegistrationCorrectStatus;
+}
+
+
+
+
+function welcomeMessages() {
+  // Find the appropriate message based on elapsed time
+  for (let i = 0; i < welcomeMessagesList.length; i++) {
+    if (elapsedTime < welcomeMessagesList[i].time) {
+      return welcomeMessagesList[i].message; // Return the current message
+    }
+  }
+  return "Welcome!"; // Default message if no valid message found
 }
 
 // Check if in right position
