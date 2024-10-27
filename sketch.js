@@ -204,8 +204,8 @@ function drawInfoText() {
     mainTextY = baseY - textHeight - 40; 
 
     // Draw the countdown text 
-    let countdownY = mainTextY + textHeight + 20; 
-    text(currentStateTime, width / 2, countdownY);
+    // let countdownY = mainTextY + textHeight + 20; 
+    // text(currentStateTime, width / 2, countdownY);
   }
 }
 
