@@ -1,5 +1,6 @@
 class DTWMovementComparison {
-  constructor(recordedTimeSeries, idealStretchTimeSeries) {
+  constructor(recordedTimeSeries, idealStretchTimeSeries, singleDimension = false) {
+    this.singleDimension = singleDimension;
     this.normalizedCost = this.#calculateDTWComparisonCost(recordedTimeSeries, idealStretchTimeSeries);
   };
 
@@ -63,11 +64,16 @@ class DTWMovementComparison {
       // 2. Calculate distance matrix
       // Computes the pairwise cosine distance between every pair of vectors in x_seq and y_seq.
       // Returns a 2D matrix where element (i, j) contains the cosine distance between x_seq[i] and y_seq[j].
-      const computeDistanceMatrix = (xSeq, ySeq) =>
+      const computeMultivariateDistanceMatrix = (xSeq, ySeq) =>
         xSeq.map(x => ySeq.map(y => cosineDistance(x, y)));
 
-      // Compute distance matrix between the stretch data and reference sequence
-      const distMat = computeDistanceMatrix(recordedStetchTimeSeries, idealStretchTimeSeries);
+    // 2. Calculate distance matrix
+          // Computes the pairwise cosine distance between every pair of vectors in x_seq and y_seq.
+          // Returns a 2D matrix where element (i, j) contains the cosine distance between x_seq[i] and y_seq[j].
+      const computeDistanceMatrix = (xSeq, ySeq) =>
+        xSeq.map(x => ySeq.map(y => x - y));
+
+      const distMat = this.singleDimension ? computeDistanceMatrix(recordedStetchTimeSeries, idealStretchTimeSeries) : computeMultivariateDistanceMatrix(recordedStetchTimeSeries, idealStretchTimeSeries);
 
       // Call dp() to get the optimal alignment path and normalized cost
       const { path, costMat, normalizedCost } = this.#computeAlignmentPath(distMat);
@@ -78,7 +84,7 @@ class DTWMovementComparison {
       console.log("Alignment Path:", path);
 
       //return normalizedCost.toFixed(5);
-      const cost = normalizedCost.toFixed(5);
+      let cost = normalizedCost.toFixed(5);
 
 
 
