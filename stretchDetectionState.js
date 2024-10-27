@@ -6,6 +6,7 @@ class StretchDetectionState {
     welcomeMessage3: "welcomeMessage3",
     welcomeMessage4: "welcomeMessage4",
     registration: "registration",
+    stretchMessage5: "stretchMessage5",
     startCountdown: "startCountdown",
     stretchNow: "stretchNow",
     scoreDisplay: "scoreDisplay",
@@ -46,7 +47,7 @@ class StretchDetectionState {
     welcomeMessage3: {
       duration: 10,
       nextStep: this.stretchDetectionStates.welcomeMessage4,
-      message: "Slowly extend your arms out to your sides like you're forming a 'T' shape",  
+      message: "Slowly extend your arms out to your sides like you're forming a 'T' shape.",  
       type: "timedMessage",
     },
     welcomeMessage4: {
@@ -59,7 +60,7 @@ class StretchDetectionState {
     registration: {
       duration: null,
       nextStep: this.stretchDetectionStates.stretchMessage5,
-      message: "Registration",
+      message: "Registration.",
       type: "registration",
     },
     stretchMessage5: {
@@ -77,13 +78,13 @@ class StretchDetectionState {
     startCountdown: {
       duration: 10,
       nextStep: this.stretchDetectionStates.stretchNow,
-      message: "Time to being the stetch",
+      message: "Time to begin the stetch!",
       type: "countdown",
     },
     stretchNow:  {
       duration: 30,
       nextStep: this.stretchDetectionStates.scoreDisplay,
-      message: "Match the stretch",
+      message: "Match the stretch.",
       type: "stretch",
     },
     scoreDisplay:  {
