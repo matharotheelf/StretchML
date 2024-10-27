@@ -94,20 +94,26 @@ function draw() {
       break;
     
       
-    case "score":
-      createScore();
-      break;
+    // case "score":
+    //   createScore();
+    //   break;
   }
 
   drawGreyBox();
   drawInfoText();
 }
 
-function createScore(){
+// function createScore() {
+//   // Define the position for the score text
+//   let mainTextY = height - 50;  // Adjust to position score as needed
 
-  let scoreText = (`Final Result: ${stretchScore}`, width / 2, mainTextY);
-  return scoreText;
-}
+//   // Draw the score text directly on the canvas
+//   textSize(20);
+//   fill(0, 0, 0);
+//   textAlign(CENTER);
+//   text(stretchDetectionState.getScore(), width / 2, mainTextY);
+// }
+
 
 // Callback function for when bodyPose outputs data
 function gotPoses(results) {
@@ -183,6 +189,9 @@ function drawInfoText() {
   // Determine the main text based on current state
   if(stretchDetectionState.currentType() == "registration") {
     text(registrationInfoText, width / 2, mainTextY);
+  }
+  else if (stretchDetectionState.currentType() == "score") {
+    text(`Final Result: ${stretchScore}`, width / 2, mainTextY);
   } else {
     text(stretchDetectionState.message(), width / 2, mainTextY);
   }

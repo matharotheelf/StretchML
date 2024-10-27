@@ -84,7 +84,7 @@ class DTWMovementComparison {
       console.log("Alignment Path:", path);
 
       //return normalizedCost.toFixed(5);
-      return  normalizedCost.toFixed(5);
+      let cost = normalizedCost.toFixed(5);
 
 
 
