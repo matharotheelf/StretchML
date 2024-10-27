@@ -1,4 +1,4 @@
-# StretchML
+# Stretch Smart
 
 Developed using [ml5.js](https://ml5js.org/) for real-time pose detection. This app helps users improve their flexibility and posture by guiding them through various stretching exercises.
 Uses machine learning to classify stretches for desk exercise routines
