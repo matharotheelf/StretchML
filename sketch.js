@@ -92,12 +92,22 @@ function draw() {
     case "stretch":
       processStretchFrame();
       break;
+    
+      
+    case "score":
+      createScore();
+      break;
   }
 
   drawGreyBox();
   drawInfoText();
 }
 
+function createScore(){
+
+  let scoreText = (`Final Result: ${stretchScore}`, width / 2, mainTextY);
+  return scoreText;
+}
 
 // Callback function for when bodyPose outputs data
 function gotPoses(results) {
