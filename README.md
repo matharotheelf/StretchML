@@ -10,8 +10,6 @@ Uses machine learning to classify stretches for desk exercise routines
 - Instructor shows you a pose
 - Scoring at the end with feedback to improve
 
-## Usage
-
 
 ## Technologies Used
 - ml5.js - A friendly high-level interface for TensorFlow.js
