@@ -31,6 +31,9 @@ class StretchPoseData {
 
     this.rightUpperArmDisplacement = this.calculateRightUpperArmDisplacement(keypoints);
     this.rightLowerArmDisplacement = this.calculateRightLowerArmDisplacement(keypoints);
+
+    this.rightArmLength = this.calculateRightArmLength();
+    this.leftArmLength = this.calculateLeftArmLength();
   }
   
   calculateMidShoulderPosition() {
@@ -63,9 +66,19 @@ class StretchPoseData {
     return p5.Vector.sub(this.#rightHandPosition, this.#rightElbowPosition);
   }
 
+  calculateRightArmLength() {
+    // displacement between elbow and hand
+    return p5.Vector.add(this.rightUpperArmDisplacement, this.rightLowerArmDisplacement).magSq();
+  }
+
+  calculateLeftArmLength() {
+    // displacement between elbow and hand
+    return p5.Vector.add(this.leftUpperArmDisplacement, this.leftLowerArmDisplacement).magSq();
+  }
+
   // visualise all of the extracted displacement vectors
   draw() {
-    stroke(255, 165, 0);
+    stroke(98, 151, 247, 100);
     strokeWeight(10);
 
     line(this.#midShoulderPosition.x, this.#midShoulderPosition.y, this.#nosePosition.x, this.#nosePosition.y);
@@ -86,5 +99,14 @@ class StretchPoseData {
     featuresData.push(this.rightLowerArmDisplacement.x, this.rightLowerArmDisplacement.y);
 
     return featuresData;
+  }
+
+  lengthFeaturesArray() {
+    var lengthData = Array();
+
+    lengthData.push(this.leftArmLength);
+    lengthData.push(this.rightArmLength);
+
+    return lengthData;
   }
 }

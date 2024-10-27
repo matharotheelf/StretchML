@@ -14,6 +14,7 @@ let timeAccumulator = 0;
 let registrationCorrectStatus = false;
 
 let exampleStretchTimeSeries;
+
 let stretchDataJson;
 let stretchScore;
 
@@ -55,15 +56,6 @@ function setup() {
   setInterval(tickStateTimer, 1000);
 }
 
-const welcomeMessagesList = [
-  { time: 1, message: "Welcome!" },
-  { time: 3, message: "Let's Set You Up for Stretching Success!" },
-  { time: 6, message: "Sit down and position yourself in front of the camera." },
-  { time: 11, message: "Move far back until the top half of your body is fully visible, with some space around you." }
-];
-
-let elapsedTime = 0; // Track the elapsed time in the welcome state
-
 function draw() {
   // Draw the webcam video
   image(video, 0, 0, width, height);
@@ -76,11 +68,6 @@ function draw() {
   // State handling logic
   switch(stretchDetectionState.currentType()) {
     case "welcome":
-      // If time exceeds the last message time, move to the next message
-      if (elapsedTime > welcomeMessagesList[welcomeMessagesList.length - 1].time) {
-        stretchDetectionState.nextStep(); // Move to next state
-        elapsedTime = 0; // Reset elapsed time
-      }
       break;
 
     case "registration":
@@ -105,11 +92,27 @@ function draw() {
     case "stretch":
       processStretchFrame();
       break;
+    
+      
+    // case "score":
+    //   createScore();
+    //   break;
   }
 
   drawGreyBox();
   drawInfoText();
 }
+
+// function createScore() {
+//   // Define the position for the score text
+//   let mainTextY = height - 50;  // Adjust to position score as needed
+
+//   // Draw the score text directly on the canvas
+//   textSize(20);
+//   fill(0, 0, 0);
+//   textAlign(CENTER);
+//   text(stretchDetectionState.getScore(), width / 2, mainTextY);
+// }
 
 
 // Callback function for when bodyPose outputs data
@@ -184,30 +187,13 @@ function drawInfoText() {
 
   textFont("Inter");
   // Determine the main text based on current state
-  switch (stretchDetectionState.currentType()) {
-    case "welcome":
-      text(welcomeMessages(), width / 2, mainTextY);
-      break;
-
-    case "registration":
-      text(registrationInfoText, width / 2, mainTextY);
-      break;
-
-    case "countdown":
-      text('Now relax.. prepare for stretch', width / 2, mainTextY);
-      // play gif
-      break;
-
-    case "stretch":
-      text('Recording stretch', width / 2, mainTextY);
-      break;
-
-    case "score":
-      text(`Final Result: ${stretchScore}`, width / 2, mainTextY);
-      break;
-
-    default:
-      text('Not Stretching', width / 2, mainTextY);
+  if(stretchDetectionState.currentType() == "registration") {
+    text(registrationInfoText, width / 2, mainTextY);
+  }
+  else if (stretchDetectionState.currentType() == "score") {
+    text(`Final Result: ${stretchScore}`, width / 2, mainTextY);
+  } else {
+    text(stretchDetectionState.message(), width / 2, mainTextY);
   }
 
   // Calculate the height of the main text
@@ -218,13 +204,10 @@ function drawInfoText() {
     mainTextY = baseY - textHeight - 40; 
 
     // Draw the countdown text 
-    let countdownY = mainTextY + textHeight + 20; 
-    text(currentStateTime, width / 2, countdownY);
+    // let countdownY = mainTextY + textHeight + 20; 
+    // text(currentStateTime, width / 2, countdownY);
   }
 }
-
-
-
 
 function drawGreyBox() {
 
@@ -283,6 +266,19 @@ function saveAndClearStretchData() {
 
     stretchScore = dtwMovementComparison.normalizedCost;
 
+    const speedMovementComparison = new MovementSpeedComparison(stretchDataTimeSeries, exampleStretchTimeSeries);
+
+    console.log("Speed Score");
+    console.log(speedMovementComparison.comparisonScore);
+
+    console.log("Fast Speed Score");
+    console.log(speedMovementComparison.fastComparisonScore);
+
+    stretchScore = dtwMovementComparison.normalizedCost;
+
+
+    // Instead of removing the canvas, just log the output or display something
+    // If needed, you can clear the previous plot or prepare for new data
     // Clear the stretch data time series to restart for the next stretch
     stretchDataTimeSeries.splice(0, stretchDataTimeSeries.length);
   }
@@ -308,7 +304,7 @@ function processRegistrationFrame() {
   const newRegistrationCorrectStatus = isWithinCorrectPosition();
 
   // update the info text with the command of what next to do
-  registrationInfoText = newRegistrationCorrectStatus ? "Great, you are in position." : "Move back to the correct position.";
+  registrationInfoText = newRegistrationCorrectStatus ? "Hold pose for a few seconds." : "We didn't quite get it. Let's quickly try again.";
 
   // if newly correct status then reset the state timer to 3 second countdown
   if(newRegistrationCorrectStatus && !registrationCorrectStatus) {
@@ -317,19 +313,6 @@ function processRegistrationFrame() {
   
   // update the global registration state variable
   registrationCorrectStatus = newRegistrationCorrectStatus;
-}
-
-
-
-
-function welcomeMessages() {
-  // Find the appropriate message based on elapsed time
-  for (let i = 0; i < welcomeMessagesList.length; i++) {
-    if (elapsedTime < welcomeMessagesList[i].time) {
-      return welcomeMessagesList[i].message; // Return the current message
-    }
-  }
-  return "Welcome!"; // Default message if no valid message found
 }
 
 // Check if in right position
