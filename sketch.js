@@ -76,13 +76,15 @@ function draw() {
 
     case "countdown":
    // Determine the width and height of the GIF
-    const gifWidth = 150;  // Desired width of the GIF
-    const gifHeight = 200; // Desired height of the GIF
+    const gifWidth = 160;  // Desired width of the GIF
+    const gifHeight = 180; // Desired height of the GIF
 
     // Calculate the position for the GIF near the right corner
     const xPos = width - gifWidth - 20; // 20 pixels from the right edge
-    const yPos = height / 4; // Move closer to the top edge
+    const yPos = height / 4 - gifHeight / 2; // Centered vertically
 
+    const opacity = 180;
+    tint(255, opacity);
     // Draw the GIF at the calculated position
     image(gifimage, xPos, yPos, gifWidth, gifHeight);
       break;
